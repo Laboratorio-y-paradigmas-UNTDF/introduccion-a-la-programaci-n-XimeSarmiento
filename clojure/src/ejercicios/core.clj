@@ -88,8 +88,8 @@
    (doblar [1 2 3]) => (2 4 6)
    (doblar [])      => ()"
   [coll]
-  (map #(* 2 %) coll)  
-)
+  (map #(* 2 %) coll) 
+)   ; el # es para funciones cortas (una sola expresión), el % es como la x de una función lambda, entonces #(* 2 %) es equivalente a (fn [x] (* 2 x)
 
 (defn solo-positivos
   "CLJ-07: Retorna solo los elementos estrictamente mayores a 0. Usar filter.
@@ -204,7 +204,7 @@
    (contar-con pos? [-1 -2 -3])     => 0
    (contar-con any? [])             => 0"
   [pred coll]
-  (count (mi-filter pred coll))
+  (count (mi-filter pred coll)) ; uso el mi-filter CLJ-13
 )
 
 ;; ─── GRUPO 4: Recursión ──────────────────────────────────────────
@@ -218,7 +218,10 @@
    (factorial 5) => 120
    (factorial 10) => 3628800"
   [n]
-  (throw (ex-info "No implementado" {:fn "factorial"})))
+  (if (zero? n)
+    1
+    (* n (factorial (dec n))))
+)
 
 (defn fibonacci-clj
   "CLJ-18: Fibonacci recursivo.
@@ -229,7 +232,11 @@
    (fibonacci-clj 10) => 55
    (fibonacci-clj 15) => 610"
   [n]
-  (throw (ex-info "No implementado" {:fn "fibonacci-clj"})))
+  (if (<= n 1)
+    n
+    (+ (fibonacci-clj (dec n))
+       (fibonacci-clj (- n 2))))
+)
 
 (defn aplanar-profundo
   "CLJ-19: Aplana una estructura anidada arbitrariamente profunda con recursión.
@@ -239,7 +246,10 @@
    (aplanar-profundo [[1 2] [3 [4 [5]]]]) => (1 2 3 4 5)
    (aplanar-profundo [])                  => ()"
   [coll]
-  (throw (ex-info "No implementado" {:fn "aplanar-profundo"})))
+  (if (coll? coll)
+	(mapcat aplanar-profundo coll)
+	(list coll))
+)
 
 (defn potencia
   "CLJ-20: Eleva base a exp (entero no negativo) con recursión.
@@ -251,7 +261,10 @@
    (potencia 3 3)   => 27
    (potencia 5 0)   => 1"
   [base exp]
-  (throw (ex-info "No implementado" {:fn "potencia"})))
+  (if (zero? exp)
+	1
+	(* base (potencia base (dec exp))))
+  )
 
 ;; ─── GRUPO 5: Colecciones y mapas ────────────────────────────────
 
@@ -263,7 +276,11 @@
    (frecuencias-manual [:a :b :a]) => {:a 2, :b 1}
    (frecuencias-manual [])         => {}"
   [coll]
-  (throw (ex-info "No implementado" {:fn "frecuencias-manual"})))
+  (reduce (fn [acc x]
+            (update acc x (fnil inc 0))) ; el update hace acc[x] = (acc[x] + 1) o 1 si no existe
+          {}
+          coll)
+)
 
 (defn agrupar-por-tipo
   "CLJ-22: Agrupa vector de mapas {:nombre :tipo} por valor de :tipo.
@@ -276,7 +293,11 @@
    => {\"X\" [{:nombre \"A\" :tipo \"X\"} {:nombre \"B\" :tipo \"X\"}],
        \"Y\" [{:nombre \"C\" :tipo \"Y\"}]}"
   [registros]
-  (throw (ex-info "No implementado" {:fn "agrupar-por-tipo"})))
+  (reduce (fn [acc registro]
+            (update acc (:tipo registro) (fnil conj []) registro)) ; el update hace acc[tipo] = (conj acc[tipo] registro) o [registro] si no existe
+          {}
+          registros)
+)
 
 (defn aplicar-descuento
   "CLJ-23: Aplica exactamente 10% de descuento a :precio de cada mapa.
@@ -287,7 +308,10 @@
                        {:nombre \"B\" :precio 200}])
    => ({:nombre \"A\" :precio 90.0} {:nombre \"B\" :precio 180.0})"
   [productos]
-  (throw (ex-info "No implementado" {:fn "aplicar-descuento"})))
+  (map (fn [producto]
+         (assoc producto :precio (* (:precio producto) 0.9))) ; el assoc crea un nuevo mapa con el mismo nombre pero con precio actualizado
+       productos)
+)
 
 (defn zip-listas
   "CLJ-24: Combina dos listas en pares usando map.
@@ -297,7 +321,8 @@
    (zip-listas [1 2 3] [:a :b :c]) => ([1 :a] [2 :b] [3 :c])
    (zip-listas [] [])              => ()"
   [lista1 lista2]
-  (throw (ex-info "No implementado" {:fn "zip-listas"})))
+  (map vector lista1 lista2)
+)
 
 (defn pipeline-estudiantes
   "CLJ-25: Pipeline funcional completo.
@@ -314,4 +339,9 @@
 
    (pipeline-estudiantes [{:nombre \"Beto\" :nota 3}]) => []"
   [estudiantes]
-  (throw (ex-info "No implementado" {:fn "pipeline-estudiantes"})))
+  (->> estudiantes
+       (filter #(>= (:nota %) 6))
+       (sort-by :nota >)
+       (map :nombre)
+       vec)
+)
