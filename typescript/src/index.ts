@@ -124,7 +124,7 @@ export function componerNombre(
  *          El array original NO debe cambiar.
  */
 export function agregarElemento<T>(arr: readonly T[], elemento: T): T[] {
-  throw new Error("No implementado");
+  return [...arr, elemento];
 }
 
 /**
@@ -136,7 +136,11 @@ export function agregarElemento<T>(arr: readonly T[], elemento: T): T[] {
  *          eliminarPorIndice([10,20,30], 99)   → [10,20,30]
  */
 export function eliminarPorIndice<T>(arr: readonly T[], indice: number): T[] {
-  throw new Error("No implementado");
+  if (indice < 0 || indice >= arr.length) {
+    return [...arr];
+  }else {
+    return [...arr.slice(0, indice), ...arr.slice(indice + 1)];
+  }  
 }
 
 /**
@@ -152,7 +156,7 @@ export function actualizarPrecio(
   producto: { nombre: string; precio: number; [key: string]: unknown },
   nuevoPrecio: number
 ): { nombre: string; precio: number; [key: string]: unknown } {
-  throw new Error("No implementado");
+  return { ...producto, precio: nuevoPrecio };
 }
 
 /**
@@ -164,7 +168,7 @@ export function actualizarPrecio(
  *          El array original NO debe cambiar.
  */
 export function ordenarSinMutar(nums: readonly number[]): number[] {
-  throw new Error("No implementado");
+  return [...nums].sort((a, b) => a - b);
 }
 
 /**
@@ -181,7 +185,10 @@ export function aplicarDescuentoRegistros(
   productos: readonly { nombre: string; precio: number }[],
   porcentaje: number
 ): { nombre: string; precio: number }[] {
-  throw new Error("No implementado");
+  return productos.map((prod) => ({
+    ...prod,
+    precio: parseFloat((prod.precio * (1 - porcentaje / 100)).toFixed(2)),
+  }));
 }
 
 // ─── GRUPO 3: map / filter / reduce ───────────────────────────────────────
