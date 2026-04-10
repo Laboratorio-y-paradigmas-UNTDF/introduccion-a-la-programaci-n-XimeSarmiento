@@ -317,7 +317,7 @@ export function totalVentasCredito(
  *   compose(inc, doble)(3) === 7  // doble(3)=6, luego inc(6)=7
  */
 export function compose<T>(f: (x: T) => T, g: (x: T) => T): (x: T) => T {
-  throw new Error("No implementado");
+  return (x: T) => f(g(x));
 }
 
 /**
@@ -333,7 +333,7 @@ export function compose<T>(f: (x: T) => T, g: (x: T) => T): (x: T) => T {
  *   proc(3) === 7
  */
 export function pipe<T>(...fns: Array<(x: T) => T>): (x: T) => T {
-  throw new Error("No implementado");
+  return (x: T) => fns.reduce((acc, fn) => fn(acc), x);
 }
 
 /**
@@ -347,7 +347,7 @@ export function pipe<T>(...fns: Array<(x: T) => T>): (x: T) => T {
  *   sumarCurried(10)(5) === 15
  */
 export function curry2<A, B, C>(fn: (a: A, b: B) => C): (a: A) => (b: B) => C {
-  throw new Error("No implementado");
+  return (a: A) => (b: B) => fn(a, b);
 }
 
 /**
@@ -361,7 +361,7 @@ export function curry2<A, B, C>(fn: (a: A, b: B) => C): (a: A) => (b: B) => C {
  *   triplicar(7) === 21
  */
 export function partial<A, B, C>(fn: (a: A, b: B) => C, a: A): (b: B) => C {
-  throw new Error("No implementado");
+  return (b: B) => fn(a, b);
 }
 
 // ─── GRUPO 5: Contraste Imperativo vs Funcional ────────────────────────────
@@ -389,7 +389,11 @@ export function partial<A, B, C>(fn: (a: A, b: B) => C, a: A): (b: B) => C {
 export function procesarVentas(
   ventas: { monto: number; tipo: string }[]
 ): { total: number; count: number; promedio: number } {
-  throw new Error("No implementado");
+  const ventasFiltradas = ventas.filter((v) => v.monto > 100);
+  const total = ventasFiltradas.reduce((acc, v) => acc + v.monto, 0);
+  const count = ventasFiltradas.length;
+  const promedio = count > 0 ? total / count : 0;
+  return { total, count, promedio };
 }
 
 /**
@@ -412,7 +416,21 @@ export function estadisticasArray(nums: number[]): {
   promedio: number;
   mediana: number;
 } {
-  throw new Error("No implementado");
+  const vacio = nums.length === 0;
+
+  const minimo = vacio ? 0 : Math.min(...nums);
+  const maximo = vacio ? 0 : Math.max(...nums);
+  const suma = nums.reduce((acc, num) => acc + num, 0);
+  const promedio = vacio ? 0 : suma / nums.length;
+
+  const ordenados = vacio ? [] : [...nums].sort((a, b) => a - b);
+  const mediana = vacio
+    ? 0
+    : nums.length % 2 === 0
+      ? (ordenados[Math.floor(nums.length / 2) - 1] +
+         ordenados[Math.floor(nums.length / 2)]) / 2
+      : ordenados[Math.floor(nums.length / 2)];
+  return { min: minimo, max: maximo, sum: suma, promedio, mediana };
 }
 
 /**
@@ -443,5 +461,14 @@ export function estadisticasArray(nums: number[]): {
 export function transformarDatos(
   registros: { nombre: string; ventas: number[]; activo: boolean }[]
 ): { nombre: string; promedio: number }[] {
-  throw new Error("No implementado");
+  return registros
+    .filter((reg) => reg.activo)
+    .map((reg) => ({
+      nombre: reg.nombre,
+      promedio:
+        reg.ventas.length > 0
+          ? parseFloat((reg.ventas.reduce((acc, v) => acc + v, 0) / reg.ventas.length).toFixed(2))
+          : 0,
+    }))
+    .sort((a, b) => b.promedio - a.promedio);
 }
