@@ -26,7 +26,7 @@
  *          calcularConImpuesto(99.99, 10) === 109.99
  */
 export function calcularConImpuesto(base: number, tasa: number): number {
-  throw new Error("No implementado");
+  return parseFloat((base * (1 + tasa / 100)).toFixed(2));
 }
 
 /**
@@ -41,7 +41,13 @@ export function agruparPorParidad(nums: number[]): {
   pares: number[];
   impares: number[];
 } {
-  throw new Error("No implementado");
+  return nums.reduce<{ pares: number[]; impares: number[] }>(
+    (acc, num) =>
+      num % 2 === 0
+        ? { ...acc, pares: [...acc.pares, num] }
+        : { ...acc, impares: [...acc.impares, num] },
+    { pares: [], impares: [] }
+  );
 }
 
 /**
@@ -54,7 +60,7 @@ export function agruparPorParidad(nums: number[]): {
  * Ejemplo: fibonacci(10) === 55
  */
 export function fibonacci(n: number): number {
-  throw new Error("No implementado");
+  return n <= 0 ? 0 : n === 1 ? 1 : fibonacci(n - 1) + fibonacci(n - 2);
 }
 
 /**
@@ -75,7 +81,21 @@ export function validarContrasena(pass: string): {
   valida: boolean;
   errores: string[];
 } {
-  throw new Error("No implementado");
+  const chars = [...pass]; // convierto a array de caracteres
+
+  const tieneMayuscula =
+    chars.filter((char) => char >= "A" && char <= "Z").length > 0;
+
+  const tieneDigito =
+    chars.filter((char) => char >= "0" && char <= "9").length > 0;
+
+  const errores = [
+    ...(pass.length < 8 ? ["Debe tener al menos 8 caracteres"] : []),
+    ...(tieneMayuscula ? [] : ["Debe contener al menos una letra mayúscula"]),
+    ...(tieneDigito ? [] : ["Debe contener al menos un dígito"]),
+  ];
+
+  return { valida: errores.length === 0, errores };
 }
 
 /**
@@ -91,7 +111,7 @@ export function componerNombre(
   apellido: string,
   titulo?: string
 ): string {
-  throw new Error("No implementado");
+  return titulo ? `${titulo} ${nombre} ${apellido}` : `${nombre} ${apellido}`;
 }
 
 // ─── GRUPO 2: Inmutabilidad ───────────────────────────────────────────────
