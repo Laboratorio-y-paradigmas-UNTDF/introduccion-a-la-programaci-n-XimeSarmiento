@@ -22,7 +22,8 @@
    (contar-pares [1 3 5])       => 0
    (contar-pares [])            => 0"
   [coll]
-  (throw (ex-info "No implementado" {:fn "contar-pares"})))
+  (count (filter even? coll))
+)
 
 (defn suma-lista
   "CLJ-02: Suma todos los elementos de coll usando reduce.
@@ -32,7 +33,8 @@
    (suma-lista [1 2 3 4 5]) => 15
    (suma-lista [])          => 0"
   [coll]
-  (throw (ex-info "No implementado" {:fn "suma-lista"})))
+  (reduce + 0 coll)
+)
 
 (defn invertir-lista
   "CLJ-03: Invierte coll usando reduce.
@@ -42,7 +44,8 @@
    (invertir-lista [1 2 3]) => (3 2 1)
    (invertir-lista [])      => ()"
   [coll]
-  (throw (ex-info "No implementado" {:fn "invertir-lista"})))
+  (reduce (fn [acc x] (cons x acc)) () coll)
+)
 
 (defn maximo-lista
   "CLJ-04: Retorna el máximo de coll usando reduce.
@@ -52,7 +55,11 @@
    (maximo-lista [3 1 4 1 5 9 2 6]) => 9
    (maximo-lista [-5 -1 -3])        => -1"
   [coll]
-  (throw (ex-info "No implementado" {:fn "maximo-lista"})))
+  (reduce (fn [acc x]
+            (if (> x acc) x acc))
+          (first coll)
+          (rest coll))
+)  
 
 (defn rango-lista
   "CLJ-05: Retorna {:min <min> :max <max> :rango <max-min>}.
@@ -61,7 +68,17 @@
 
    (rango-lista [3 1 4 1 5 9]) => {:min 1 :max 9 :rango 8}"
   [coll]
-  (throw (ex-info "No implementado" {:fn "rango-lista"})))
+  (let [{:keys [min max]}
+        (reduce (fn [{:keys [min max]} x]
+                  {:min (if (< x min) x min)
+                   :max (if (> x max) x max)})
+                {:min (first coll)
+                 :max (first coll)}
+                (rest coll))]
+    {:min min
+     :max max
+     :rango (- max min)})
+)
 
 ;; ─── GRUPO 2: map / filter / reduce ─────────────────────────────
 
@@ -71,7 +88,8 @@
    (doblar [1 2 3]) => (2 4 6)
    (doblar [])      => ()"
   [coll]
-  (throw (ex-info "No implementado" {:fn "doblar"})))
+  (map #(* 2 %) coll)  
+)
 
 (defn solo-positivos
   "CLJ-07: Retorna solo los elementos estrictamente mayores a 0. Usar filter.
@@ -79,7 +97,8 @@
    (solo-positivos [-2 -1 0 1 2 3]) => (1 2 3)
    (solo-positivos [-1 -2])         => ()"
   [coll]
-  (throw (ex-info "No implementado" {:fn "solo-positivos"})))
+  (filter pos? coll)
+)
 
 (defn producto-lista
   "CLJ-08: Producto de todos los elementos usando reduce.
@@ -88,7 +107,8 @@
    (producto-lista [1 2 3 4 5]) => 120
    (producto-lista [7])         => 7"
   [coll]
-  (throw (ex-info "No implementado" {:fn "producto-lista"})))
+  (reduce * coll)
+)
 
 (defn palabras-mayusculas
   "CLJ-09: Convierte cada string a mayúsculas usando map y clojure.string/upper-case.
@@ -96,7 +116,8 @@
    (palabras-mayusculas [\"hola\" \"mundo\"]) => (\"HOLA\" \"MUNDO\")
    (palabras-mayusculas [])               => ()"
   [palabras]
-  (throw (ex-info "No implementado" {:fn "palabras-mayusculas"})))
+  (map str/upper-case palabras)
+)
 
 (defn suma-cuadrados-pares
   "CLJ-10: Pipeline: filtrar pares → elevar al cuadrado → sumar.
@@ -105,7 +126,11 @@
    (suma-cuadrados-pares [1 2 3 4 5]) => 4+16 = 20
    (suma-cuadrados-pares [1 3 5])     => 0"
   [coll]
-  (throw (ex-info "No implementado" {:fn "suma-cuadrados-pares"})))
+  (->> coll
+       (filter even?)
+       (map #(* % %))
+       (reduce + 0))
+)
 
 (defn aplanar-listas
   "CLJ-11: Aplana lista de listas con mapcat.
@@ -114,7 +139,7 @@
    (aplanar-listas [[1 2] [3 4] [5]]) => (1 2 3 4 5)
    (aplanar-listas [[] [1] []])       => (1)"
   [listas]
-  (throw (ex-info "No implementado" {:fn "aplanar-listas"})))
+  (mapcat identity listas))
 
 ;; ─── GRUPO 3: Funciones de Orden Superior ────────────────────────
 
